@@ -13,6 +13,7 @@ import App from './components/App';
 import { createIntl } from './intl';
 import reducer from './reducers';
 import * as formatters from './helpers/formatHelpers';
+import { HelmetProvider } from 'react-helmet-async';
 
 const cspacePublicBrowser = (...customConfigs) => {
   config.merge(...customConfigs);
@@ -45,11 +46,13 @@ const cspacePublicBrowser = (...customConfigs) => {
   });
 
   render(
-    <RawIntlProvider value={intl}>
-      <StoreProvider store={store}>
-        <App />
-      </StoreProvider>
-    </RawIntlProvider>,
+    <HelmetProvider>
+      <RawIntlProvider value={intl}>
+        <StoreProvider store={store}>
+          <App />
+        </StoreProvider>
+      </RawIntlProvider>
+    </HelmetProvider>,
     mountNode,
   );
 };

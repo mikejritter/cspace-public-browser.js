@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Route, Switch } from 'react-router';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import DetailPage from './DetailPageContainer';
 import SearchPage from './SearchPageContainer';
 import config from '../../config';
