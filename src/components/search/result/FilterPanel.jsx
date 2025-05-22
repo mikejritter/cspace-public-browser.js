@@ -1,6 +1,6 @@
 /* global window */
 
-import React, { Component } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import Immutable from 'immutable';
@@ -36,63 +36,23 @@ const {
 
 const filterPanelCutoffWidth = parseInt(cssFilterPanelCutoffWidth, 10);
 
-export default class FilterPanel extends Component {
-  constructor() {
-    super();
+export default function FilterPanel({ isExpanded, isPending, result }) {
+  const panelRef = useRef(null);
+  const [height, setHeight] = useState(0);
 
-    this.handleResize = this.handleResize.bind(this);
-    this.handleScroll = this.handleScroll.bind(this);
+  useEffect(() => {
+    function updateHeight() {
+      const { innerHeight } = window;
+      const rect = panelRef.current.getBoundingClientRect();
+      const maxHeight = innerHeight - rect.top;
+      setHeight(maxHeight);
+    }
+    window.addEventListener('resize', updateHeight);
+    updateHeight();
+    return () => window.removeEventListener('resize', updateHeight);
+  }, []);
 
-    this.ref = React.createRef();
-
-    this.state = {};
-  }
-
-  componentDidMount() {
-    const {
-      api,
-    } = this.props;
-
-    window.addEventListener('resize', this.handleResize);
-    window.addEventListener('scroll', this.handleScroll);
-
-    api({
-      setHeight: this.setHeight.bind(this),
-    });
-
-    this.setHeight();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.handleResize);
-    window.removeEventListener('scroll', this.handleScroll);
-  }
-
-  handleResize() {
-    this.setHeight();
-  }
-
-  handleScroll() {
-    this.setHeight();
-  }
-
-  setHeight() {
-    const height = window.innerHeight;
-    const rect = this.ref.current.getBoundingClientRect();
-    const maxHeight = height - rect.top;
-
-    this.setState({
-      height: maxHeight,
-    });
-  }
-
-  renderContent() {
-    const {
-      isExpanded,
-      isPending,
-      result,
-    } = this.props;
-
+  function renderContent() {
     const isVisible = (window.innerWidth > filterPanelCutoffWidth) || isExpanded;
 
     if (!isVisible || !result.get('total')) {
@@ -115,28 +75,18 @@ export default class FilterPanel extends Component {
     );
   }
 
-  render() {
-    const {
-      isExpanded,
-    } = this.props;
+  const className = isExpanded ? styles.expanded : styles.collapsed;
+  const inlineStyle = height ? { height } : undefined;
 
-    const {
-      height,
-    } = this.state;
-
-    const className = isExpanded ? styles.expanded : styles.collapsed;
-    const inlineStyle = height ? { height } : undefined;
-
-    return (
-      <div
-        className={className}
-        ref={this.ref}
-        style={inlineStyle}
-      >
-        {this.renderContent()}
-      </div>
-    );
-  }
+  return (
+    <div
+      className={className}
+      ref={panelRef}
+      style={inlineStyle}
+    >
+      {renderContent()}
+    </div>
+  );
 }
 
 FilterPanel.propTypes = propTypes;
