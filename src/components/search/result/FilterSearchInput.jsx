@@ -1,12 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { defineMessages, injectIntl } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 import styles from '../../../../styles/cspace/FilterSearchInput.css';
 
 const propTypes = {
-  intl: PropTypes.shape({
-    formatMessage: PropTypes.func.isRequired,
-  }).isRequired,
   onCommit: PropTypes.func,
   value: PropTypes.string,
 };
@@ -23,46 +20,29 @@ const messages = defineMessages({
   },
 });
 
-class FilterSearchInput extends Component {
-  constructor() {
-    super();
+export default function FilterSearchInput({ onCommit, value }) {
+  const intl = useIntl();
 
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  handleChange(event) {
-    const {
-      onCommit,
-    } = this.props;
-
+  function handleChange(event) {
     onCommit(event.target.value);
   }
 
-  render() {
-    const {
-      intl,
-      value,
-    } = this.props;
+  const label = intl.formatMessage(messages.label);
 
-    const label = intl.formatMessage(messages.label);
+  return (
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control
+    <label>
+      {label}
 
-    return (
-      // eslint-disable-next-line jsx-a11y/label-has-associated-control
-      <label>
-        {label}
-
-        <input
-          className={styles.common}
-          type="search"
-          value={value}
-          onChange={this.handleChange}
-        />
-      </label>
-    );
-  }
+      <input
+        className={styles.common}
+        type="search"
+        value={value}
+        onChange={handleChange}
+      />
+    </label>
+  );
 }
 
 FilterSearchInput.propTypes = propTypes;
 FilterSearchInput.defaultProps = defaultProps;
-
-export default injectIntl(FilterSearchInput);
