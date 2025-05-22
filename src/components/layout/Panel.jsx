@@ -1,59 +1,39 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styles from '../../../styles/cspace/Panel.css';
 
 const propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.string,
   children: PropTypes.oneOfType([
     PropTypes.element,
     PropTypes.arrayOf(PropTypes.element),
   ]),
   title: PropTypes.element,
-  isExpanded: PropTypes.bool,
-  onHeaderClick: PropTypes.func,
 };
 
 const defaultProps = {
+  id: '',
   children: undefined,
-  isExpanded: false,
-  onHeaderClick: () => undefined,
   title: undefined,
 };
 
-export default class Panel extends Component {
-  constructor() {
-    super();
+export default function Panel({ id, children, title }) {
+  const [expanded, setExpanded] = useState(true);
 
-    this.handleHeaderButtonClick = this.handleHeaderButtonClick.bind(this);
+  function handleHeaderButtonClick() {
+    setExpanded(!expanded);
   }
 
-  handleHeaderButtonClick() {
-    const {
-      id,
-      onHeaderClick,
-    } = this.props;
+  const className = expanded ? styles.expanded : styles.collapsed;
 
-    onHeaderClick(id);
-  }
-
-  render() {
-    const {
-      children,
-      isExpanded,
-      title,
-    } = this.props;
-
-    const className = isExpanded ? styles.expanded : styles.collapsed;
-
-    return (
-      <div className={className}>
-        <header>
-          <button onClick={this.handleHeaderButtonClick} aria-expanded={isExpanded} type="button">{title}</button>
-        </header>
-        {isExpanded ? children : undefined}
-      </div>
-    );
-  }
+  return (
+    <div className={className}>
+      <header>
+        <button onClick={handleHeaderButtonClick} aria-expanded={expanded} type="button">{title}</button>
+      </header>
+      {expanded ? children : undefined}
+    </div>
+  );
 }
 
 Panel.propTypes = propTypes;

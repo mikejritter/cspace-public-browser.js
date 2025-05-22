@@ -5,7 +5,7 @@ import { withRouter } from 'react-router';
 import Immutable from 'immutable';
 import memoize from 'memoize-one';
 import FilterSearchInput from './FilterSearchInput';
-import Panel from '../../layout/PanelContainer';
+import Panel from '../../layout/Panel';
 import styles from '../../../../styles/cspace/Filter.css';
 
 const propTypes = {
@@ -144,6 +144,7 @@ class Filter extends Component {
       selectedValues = Immutable.List.of(selectedValues);
     }
 
+    // TODO: This should be its own component
     return matchingBuckets.map((bucket, index) => {
       const value = bucket.get('key');
       const type = typeof value;
