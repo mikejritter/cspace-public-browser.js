@@ -1,10 +1,10 @@
 /* global window */
 
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet-async';
-import { defineMessages, injectIntl } from 'react-intl';
-import { withRouter } from 'react-router';
+import { defineMessages, useIntl } from 'react-intl';
+import { useLocation } from 'react-router';
 import Immutable from 'immutable';
 import bodyClassName from '../../helpers/bodyClassName';
 import Fixed from '../layout/Fixed';
@@ -17,12 +17,6 @@ import { FILTER_PANEL_ID } from '../../constants/ids';
 import styles from '../../../styles/cspace/SearchPage.css';
 
 const propTypes = {
-  intl: PropTypes.shape({
-    formatMessage: PropTypes.func.isRequired,
-  }).isRequired,
-  location: PropTypes.shape({
-    search: PropTypes.string,
-  }).isRequired,
   isFilterPanelExpanded: PropTypes.bool,
   onLocationChange: PropTypes.func,
   onTogglePanelButtonClick: PropTypes.func,
@@ -43,16 +37,13 @@ const messages = defineMessages({
   },
 });
 
-class SearchPage extends Component {
-  constructor() {
-    super();
+function SearchPage({
+  onLocationChange, params, isFilterPanelExpanded, onTogglePanelButtonClick,
+}) {
+  const intl = useIntl();
+  const location = useLocation();
 
-    this.handleFilterPanelApi = this.handleFilterPanelApi.bind(this);
-    this.handleSearchResultListHitsUpdated = this.handleSearchResultListHitsUpdated.bind(this);
-    this.handleToggleFilterPanelButtonClick = this.handleToggleFilterPanelButtonClick.bind(this);
-  }
-
-  componentDidMount() {
+  useEffect(() => {
     window.document.body.classList.add(bodyClassName(styles.common));
 
     if (window.scrollTo) {
@@ -62,99 +53,52 @@ class SearchPage extends Component {
       });
     }
 
-    this.handleLocationChange();
-  }
-
-  componentDidUpdate(prevProps) {
-    const {
-      location,
-    } = this.props;
-
-    const {
-      location: prevLocation,
-    } = prevProps;
-
-    if (location !== prevLocation) {
-      this.handleLocationChange();
-    }
-  }
-
-  componentWillUnmount() {
-    window.document.body.classList.remove(bodyClassName(styles.common));
-  }
-
-  handleFilterPanelApi(api) {
-    this.filterPanelApi = api;
-  }
-
-  handleLocationChange() {
-    const {
-      location,
-      onLocationChange,
-    } = this.props;
-
     onLocationChange(location);
-  }
+    return (() => window.document.body.classList.remove(bodyClassName(styles.common)));
+  }, [location]);
 
-  handleSearchResultListHitsUpdated() {
-    if (this.filterPanelApi) {
-      this.filterPanelApi.setHeight();
-    }
-  }
-
-  handleToggleFilterPanelButtonClick() {
-    const {
-      onTogglePanelButtonClick,
-    } = this.props;
-
+  // todo: push into FilterPanel?
+  function handleToggleFilterPanelButtonClick() {
     onTogglePanelButtonClick(FILTER_PANEL_ID);
   }
 
-  render() {
-    const {
-      intl,
-      isFilterPanelExpanded,
-      params,
-    } = this.props;
+  if (!params) {
+    return null;
+  }
 
-    if (!params) {
-      return null;
-    }
+  const title = intl.formatMessage(messages.title);
 
-    const title = intl.formatMessage(messages.title);
+  return (
+    <div className={styles.common}>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
 
-    return (
-      <div className={styles.common}>
-        <Helmet>
-          <title>{title}</title>
-        </Helmet>
+      <Fixed>
+        <SearchEntryPanel />
 
-        <Fixed>
-          <SearchEntryPanel />
-
-          <ToggleFilterPanelButton
-            isFilterPanelExpanded={isFilterPanelExpanded}
-            onClick={this.handleToggleFilterPanelButtonClick}
-          />
-
-          <FilterPanel
-            api={this.handleFilterPanelApi}
-            isExpanded={isFilterPanelExpanded}
-          />
-        </Fixed>
-
-        <SearchResultPanel
-          params={params}
-          onHitsUpdated={this.handleSearchResultListHitsUpdated}
+        <ToggleFilterPanelButton
+          isFilterPanelExpanded={isFilterPanelExpanded}
+          // eslint-disable-next-line react/jsx-no-bind
+          onClick={handleToggleFilterPanelButtonClick}
         />
 
-        <ScrollTopButton />
-      </div>
-    );
-  }
+        <FilterPanel
+          // eslint-disable-next-line react/jsx-no-bind
+          isExpanded={isFilterPanelExpanded}
+        />
+      </Fixed>
+
+      <SearchResultPanel
+        params={params}
+      />
+
+      <ScrollTopButton />
+    </div>
+  );
 }
 
 SearchPage.propTypes = propTypes;
 SearchPage.defaultProps = defaultProps;
 
-export default injectIntl(withRouter(SearchPage));
+export default SearchPage;
