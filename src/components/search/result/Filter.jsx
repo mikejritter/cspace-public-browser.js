@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import Immutable from 'immutable';
 import memoize from 'memoize-one';
 import FilterSearchInput from './FilterSearchInput';
@@ -81,7 +81,7 @@ export default function Filter({
   messages,
   showSearch,
 }) {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   function handleSearchInputCommit(value) {
     onSearchValueCommit(id, value);
@@ -100,7 +100,7 @@ export default function Filter({
     const { type } = dataset;
     const value = (type === 'number') ? Number.parseInt(name, 10) : name;
 
-    onValueCommit(history, id, value, checkbox.checked);
+    onValueCommit(navigate, id, value, checkbox.checked);
   }
 
   function renderBuckets() {

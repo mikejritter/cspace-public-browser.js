@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import Immutable from 'immutable';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import SearchQueryInput from './SearchQueryInput';
 import { SEARCH_QUERY_ID } from '../../../constants/ids';
 import styles from '../../../../styles/cspace/SearchEntryForm.css';
@@ -20,7 +20,7 @@ const defaultProps = {
 
 export default function SearchEntryForm({ onCommit, onSubmit, params }) {
   const ref = useRef(null);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   function handleInputCommit(id, value) {
     onCommit(id, value);
@@ -29,7 +29,7 @@ export default function SearchEntryForm({ onCommit, onSubmit, params }) {
   function handleSubmit(event) {
     event.preventDefault();
 
-    onSubmit(history);
+    onSubmit(navigate);
   }
 
   return (
