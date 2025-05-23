@@ -1,7 +1,6 @@
 /* global fetch, window */
 
 import Immutable from 'immutable';
-import { useLocation } from 'react-router';
 import config from '../config';
 import { SEARCH_QUERY_ID, SORT_ID } from '../constants/ids';
 import { locationToSearchParams, searchParamsToQueryString } from '../helpers/urlHelpers';
@@ -30,13 +29,15 @@ import {
   getFilterAgg,
 } from '../helpers/esQueryHelpers';
 
-export const openSearch = (history, params = Immutable.Map()) => {
+export const openSearch = (navigate, params = Immutable.Map()) => {
   const queryString = searchParamsToQueryString(params);
 
-  // const location = useLocation();
-  console.log(`openSearch: ${JSON.stringify(queryString)}`);
-
-  history(`/search?${queryString}`);
+  navigate(`/search?${queryString}`);
+  /*
+  history.push({
+    search: `?${queryString}`,
+  });
+  */
 
   return {
     type: OPEN_SEARCH,

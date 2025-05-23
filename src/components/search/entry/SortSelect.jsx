@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import { defineMessages, useIntl } from 'react-intl';
 import config from '../../../config';
 import styles from '../../../../styles/cspace/SortSelect.css';
@@ -44,10 +44,10 @@ const messages = defineMessages({
 
 export default function SortSelect({ onCommit, value }) {
   const intl = useIntl();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   function handleChange(event) {
-    onCommit(history, event.target.value);
+    onCommit(navigate, event.target.value);
   }
 
   return (

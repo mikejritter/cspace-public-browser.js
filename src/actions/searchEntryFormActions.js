@@ -10,6 +10,6 @@ export const setSearchEntryFormParam = (id, value) => ({
   },
 });
 
-export const applySearchEntryForm = (history) => (dispatch, getState) => (
-  dispatch(openSearch(history, getSearchEntryFormParams(getState())))
+export const applySearchEntryForm = (navigate) => (dispatch, getState) => (
+  dispatch(openSearch(navigate, getSearchEntryFormParams(getState())))
 );
