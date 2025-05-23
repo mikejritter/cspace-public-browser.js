@@ -29,8 +29,8 @@ export const clearDetail = () => ({
   type: CLEAR_DETAIL,
 });
 
-export const setDetailParams = (location, match) => {
-  const params = locationToDetailParams(location, match);
+export const setDetailParams = (location, csid) => {
+  const params = locationToDetailParams(location, csid);
 
   return {
     type: SET_DETAIL_PARAMS,
