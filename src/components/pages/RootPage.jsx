@@ -29,6 +29,7 @@ export default function RootPage() {
       </Helmet>
 
       <Routes>
+        <Route path="/" element={<SearchPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path={`/${detailPath}/:csid`} element={<DetailPage />} />
       </Routes>
