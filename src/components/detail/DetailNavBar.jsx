@@ -66,12 +66,10 @@ export default function DetailNavBar(props) {
       <span>
         <Link
           className={linkStyles.prev}
-          to={{
-            pathname: `/${detailPath}/${csid}`,
-            state: {
-              index: index - 1,
-              searchParams: searchParamsObj,
-            },
+          to={`/${detailPath}/${csid}`}
+          state={{
+            index: index - 1,
+            searchParams: searchParamsObj,
           }}
         >
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
@@ -88,12 +86,10 @@ export default function DetailNavBar(props) {
       <span>
         <Link
           className={linkStyles.next}
-          to={{
-            pathname: `/${detailPath}/${csid}`,
-            state: {
-              index: index + 1,
-              searchParams: searchParamsObj,
-            },
+          to={`/${detailPath}/${csid}`}
+          state={{
+            index: index + 1,
+            searchParams: searchParamsObj,
           }}
         >
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
@@ -110,10 +106,7 @@ export default function DetailNavBar(props) {
       <div>
         <Link
           className={linkStyles.back}
-          to={{
-            pathname: '/search',
-            search: `?${queryString}`,
-          }}
+          to={`/search?${queryString}`}
         >
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <FormattedMessage {...messages.search} />

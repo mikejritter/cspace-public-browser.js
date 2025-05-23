@@ -44,12 +44,10 @@ export default function SearchResultTile(props) {
   return (
     <Link
       className={styles.common}
-      to={{
-        pathname: url,
-        state: {
-          index,
-          searchParams: params.toJS(),
-        },
+      to={url}
+      state={{
+        index,
+        searchParams: params.toJS(),
       }}
     >
       <SearchResultImage
