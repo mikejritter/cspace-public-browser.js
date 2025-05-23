@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { withRouter } from 'react-router';
+import { useHistory } from 'react-router';
 import Immutable from 'immutable';
 import memoize from 'memoize-one';
 import FilterSearchInput from './FilterSearchInput';
@@ -12,9 +12,6 @@ const propTypes = {
   aggregation: PropTypes.instanceOf(Immutable.Map),
   field: PropTypes.string.isRequired,
   formatValue: PropTypes.func,
-  history: PropTypes.shape({
-    push: PropTypes.func.isRequired,
-  }).isRequired,
   id: PropTypes.string.isRequired,
   messages: PropTypes.shape({
     label: PropTypes.object.isRequired,
@@ -35,7 +32,7 @@ const defaultProps = {
   showSearch: true,
 };
 
-const messages = defineMessages({
+const countMessage = defineMessages({
   count: {
     id: 'filter.count',
     defaultMessage: '({count, number})',
@@ -73,30 +70,24 @@ const handleCheckboxFocus = (event) => {
   focusedFieldUlElement.scrollIntoView({ block: 'end', behavior: 'instant' });
 };
 
-class Filter extends Component {
-  constructor() {
-    super();
+export default function Filter({
+  id,
+  onValueCommit,
+  onSearchValueCommit,
+  aggregation,
+  formatValue,
+  params,
+  searchValue,
+  messages,
+  showSearch,
+}) {
+  const history = useHistory();
 
-    this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
-    this.handleSearchInputCommit = this.handleSearchInputCommit.bind(this);
-  }
-
-  handleSearchInputCommit(value) {
-    const {
-      id,
-      onSearchValueCommit,
-    } = this.props;
-
+  function handleSearchInputCommit(value) {
     onSearchValueCommit(id, value);
   }
 
-  handleCheckboxChange(event) {
-    const {
-      history,
-      id,
-      onValueCommit,
-    } = this.props;
-
+  function handleCheckboxChange(event) {
     const {
       target: checkbox,
     } = event;
@@ -112,15 +103,7 @@ class Filter extends Component {
     onValueCommit(history, id, value, checkbox.checked);
   }
 
-  renderBuckets() {
-    const {
-      aggregation,
-      formatValue,
-      id,
-      params,
-      searchValue,
-    } = this.props;
-
+  function renderBuckets() {
     const formattedValues = getFormattedValues(aggregation, formatValue);
     const buckets = aggregation.get('buckets');
 
@@ -144,7 +127,7 @@ class Filter extends Component {
       selectedValues = Immutable.List.of(selectedValues);
     }
 
-    // TODO: This should be its own component
+    // TODO: This should probably be its own component
     return matchingBuckets.map((bucket, index) => {
       const value = bucket.get('key');
       const type = typeof value;
@@ -163,7 +146,7 @@ class Filter extends Component {
               data-number={index}
               name={value}
               type="checkbox"
-              onChange={this.handleCheckboxChange}
+              onChange={handleCheckboxChange}
               onFocus={handleCheckboxFocus}
             />
 
@@ -172,7 +155,7 @@ class Filter extends Component {
                 {formattedValue}
                 {' '}
                 {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                <FormattedMessage {...messages.count} values={{ count }} />
+                <FormattedMessage {...countMessage.count} values={{ count }} />
               </span>
             </div>
           </label>
@@ -181,47 +164,36 @@ class Filter extends Component {
     });
   }
 
-  render() {
-    const {
-      aggregation,
-      id,
-      messages: filterMessages,
-      searchValue,
-      showSearch,
-    } = this.props;
+  const buckets = aggregation.get('buckets');
+  const isEmpty = !buckets || buckets.size === 0;
 
-    const buckets = aggregation.get('buckets');
-    const isEmpty = !buckets || buckets.size === 0;
+  if (isEmpty) {
+    return null;
+  }
 
-    if (isEmpty) {
-      return null;
-    }
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  const title = <FormattedMessage {...messages.label} />;
 
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    const title = <FormattedMessage {...filterMessages.label} />;
-
-    return (
-      <Panel id={`Filter-${id}`} title={title}>
-        <div className={styles.common}>
-          {
+  return (
+    <Panel id={`Filter-${id}`} title={title}>
+      <div className={styles.common}>
+        {
             showSearch
             && (
               <FilterSearchInput
                 value={searchValue}
-                onCommit={this.handleSearchInputCommit}
+                // eslint-disable-next-line react/jsx-no-bind
+                onCommit={handleSearchInputCommit}
               />
             )
           }
-          <ul>
-            {this.renderBuckets(buckets)}
-          </ul>
-        </div>
-      </Panel>
-    );
-  }
+        <ul>
+          {renderBuckets(buckets)}
+        </ul>
+      </div>
+    </Panel>
+  );
 }
 
 Filter.propTypes = propTypes;
 Filter.defaultProps = defaultProps;
-
-export default withRouter(Filter);
