@@ -1,15 +1,12 @@
-import React, { Component } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router';
 import Immutable from 'immutable';
+import { useHistory } from 'react-router';
 import SearchQueryInput from './SearchQueryInput';
 import { SEARCH_QUERY_ID } from '../../../constants/ids';
 import styles from '../../../../styles/cspace/SearchEntryForm.css';
 
 const propTypes = {
-  history: PropTypes.shape({
-    push: PropTypes.func,
-  }).isRequired,
   onCommit: PropTypes.func,
   onSubmit: PropTypes.func,
   params: PropTypes.instanceOf(Immutable.Map),
@@ -21,62 +18,37 @@ const defaultProps = {
   params: Immutable.Map(),
 };
 
-class SearchEntryForm extends Component {
-  constructor() {
-    super();
+export default function SearchEntryForm({ onCommit, onSubmit, params }) {
+  const ref = useRef(null);
+  const history = useHistory();
 
-    this.handleInputCommit = this.handleInputCommit.bind(this);
-    this.handleRef = this.handleRef.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleInputCommit(id, value) {
-    const {
-      onCommit,
-    } = this.props;
-
+  function handleInputCommit(id, value) {
     onCommit(id, value);
   }
 
-  handleRef(ref) {
-    this.domNode = ref;
-  }
-
-  handleSubmit(event) {
-    const {
-      history,
-      onSubmit,
-    } = this.props;
-
+  function handleSubmit(event) {
     event.preventDefault();
 
     onSubmit(history);
   }
 
-  render() {
-    const {
-      params,
-    } = this.props;
-
-    return (
-      <form
-        className={styles.common}
-        ref={this.handleRef}
-        role="search"
-        onSubmit={this.handleSubmit}
-      >
-        <SearchQueryInput
-          id={SEARCH_QUERY_ID}
-          showSubmitButton
-          value={params.get(SEARCH_QUERY_ID)}
-          onCommit={this.handleInputCommit}
-        />
-      </form>
-    );
-  }
+  return (
+    <form
+      className={styles.common}
+      ref={ref}
+      role="search"
+      onSubmit={handleSubmit}
+    >
+      <SearchQueryInput
+        id={SEARCH_QUERY_ID}
+        showSubmitButton
+        value={params.get(SEARCH_QUERY_ID)}
+        // eslint-disable-next-line react/jsx-no-bind
+        onCommit={handleInputCommit}
+      />
+    </form>
+  );
 }
 
 SearchEntryForm.propTypes = propTypes;
 SearchEntryForm.defaultProps = defaultProps;
-
-export default withRouter(SearchEntryForm);
