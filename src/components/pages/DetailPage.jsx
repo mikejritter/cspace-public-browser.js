@@ -1,25 +1,15 @@
 /* global window */
 
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Immutable from 'immutable';
+import { useLocation, useParams } from 'react-router';
 import bodyClassName from '../../helpers/bodyClassName';
 import ScrollTopButton from '../layout/ScrollTopButton';
 import DetailPanel from '../detail/DetailPanelContainer';
 import styles from '../../../styles/cspace/DetailPage.css';
 
 const propTypes = {
-  location: PropTypes.shape({
-    search: PropTypes.string.isRequired,
-    state: PropTypes.shape({
-      index: PropTypes.number,
-    }),
-  }).isRequired,
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      csid: PropTypes.string,
-    }),
-  }).isRequired,
   params: PropTypes.instanceOf(Immutable.Map),
   onLeave: PropTypes.func,
   onLocationChange: PropTypes.func,
@@ -31,8 +21,13 @@ const defaultProps = {
   params: undefined,
 };
 
-export default class DetailPage extends Component {
-  componentDidMount() {
+export default function DetailPage({
+  params, onLeave, onLocationChange,
+}) {
+  const location = useLocation();
+  const { csid } = useParams();
+
+  useEffect(() => {
     window.document.body.classList.add(bodyClassName(styles.common));
 
     if (window.scrollTo) {
@@ -42,59 +37,22 @@ export default class DetailPage extends Component {
       });
     }
 
-    this.handleLocationChange();
+    onLocationChange(location, csid);
+    return (() => window.document.body.classList.remove(bodyClassName(styles.common)));
+  }, [location]);
+
+  useEffect(() => (() => onLeave()), []);
+
+  if (!params) {
+    return null;
   }
 
-  componentDidUpdate(prevProps) {
-    const {
-      location,
-    } = this.props;
-
-    const {
-      location: prevLocation,
-    } = prevProps;
-
-    if (location !== prevLocation) {
-      this.handleLocationChange();
-    }
-  }
-
-  componentWillUnmount() {
-    const {
-      onLeave,
-    } = this.props;
-
-    window.document.body.classList.remove(bodyClassName(styles.common));
-
-    onLeave();
-  }
-
-  handleLocationChange() {
-    const {
-      location,
-      match,
-      onLocationChange,
-    } = this.props;
-
-    onLocationChange(location, match);
-  }
-
-  render() {
-    const {
-      params,
-    } = this.props;
-
-    if (!params) {
-      return null;
-    }
-
-    return (
-      <div className={styles.common}>
-        <DetailPanel params={params} />
-        <ScrollTopButton />
-      </div>
-    );
-  }
+  return (
+    <div className={styles.common}>
+      <DetailPanel params={params} />
+      <ScrollTopButton />
+    </div>
+  );
 }
 
 DetailPage.propTypes = propTypes;

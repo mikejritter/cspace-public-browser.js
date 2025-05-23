@@ -18,8 +18,8 @@ export const locationToSearchParams = (location) => (
     .map((value) => Immutable.fromJS(JSON.parse(value)))
 );
 
-export const locationToDetailParams = (location, match) => {
-  let params = Immutable.fromJS(match.params);
+export const locationToDetailParams = (location, csid) => {
+  let params = Immutable.fromJS({ csid });
 
   const {
     hash,
