@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect, Route, Switch } from 'react-router';
+import { Route, Routes } from 'react-router';
 import { BrowserRouter as Router } from 'react-router-dom';
 import config from '../config';
 import RootPage from './pages/RootPage';
@@ -9,10 +9,10 @@ export default function App() {
 
   return (
     <Router basename={basename}>
-      <Switch>
-        <Redirect exact path="/" to="/search" />
-        <Route component={RootPage} />
-      </Switch>
+      <Routes>
+        {/* <Route path="/" render={() => <Redirect to="/search" />} /> */}
+        <Route path="*" element={<RootPage />} />
+      </Routes>
     </Router>
   );
 }

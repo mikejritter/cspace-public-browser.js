@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { Route, Switch } from 'react-router';
+import { Route, Routes } from 'react-router';
 import { Helmet } from 'react-helmet-async';
 import DetailPage from './DetailPageContainer';
 import SearchPage from './SearchPageContainer';
@@ -28,10 +28,10 @@ export default function RootPage() {
         <meta name="viewport" content="width=device-width" />
       </Helmet>
 
-      <Switch>
-        <Route path="/search" component={SearchPage} />
-        <Route path={`/${detailPath}/:csid`} component={DetailPage} />
-      </Switch>
+      <Routes>
+        <Route path="/search" element={<SearchPage />} />
+        <Route path={`/${detailPath}/:csid`} element={<DetailPage />} />
+      </Routes>
     </div>
   );
 }

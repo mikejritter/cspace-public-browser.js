@@ -7,13 +7,13 @@ import { applyMiddleware, compose, createStore } from 'redux';
 import { Provider as StoreProvider } from 'react-redux';
 import thunk from 'redux-thunk';
 import warning from 'warning';
+import { HelmetProvider } from 'react-helmet-async';
 import { loadPrefs } from './actions/prefsActions';
 import config from './config';
 import App from './components/App';
 import { createIntl } from './intl';
 import reducer from './reducers';
 import * as formatters from './helpers/formatHelpers';
-import { HelmetProvider } from 'react-helmet-async';
 
 const cspacePublicBrowser = (...customConfigs) => {
   config.merge(...customConfigs);

@@ -1,6 +1,7 @@
 /* global fetch, window */
 
 import Immutable from 'immutable';
+import { useLocation } from 'react-router';
 import config from '../config';
 import { SEARCH_QUERY_ID, SORT_ID } from '../constants/ids';
 import { locationToSearchParams, searchParamsToQueryString } from '../helpers/urlHelpers';
@@ -32,9 +33,10 @@ import {
 export const openSearch = (history, params = Immutable.Map()) => {
   const queryString = searchParamsToQueryString(params);
 
-  history.push({
-    search: `?${queryString}`,
-  });
+  // const location = useLocation();
+  console.log(`openSearch: ${JSON.stringify(queryString)}`);
+
+  history(`/search?${queryString}`);
 
   return {
     type: OPEN_SEARCH,
