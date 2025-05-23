@@ -1,14 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { defineMessages, injectIntl } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 import SearchSubmitButton from './SearchSubmitButton';
 import styles from '../../../../styles/cspace/SearchQueryInput.css';
 
 const propTypes = {
   id: PropTypes.string.isRequired,
-  intl: PropTypes.shape({
-    formatMessage: PropTypes.func.isRequired,
-  }).isRequired,
   onCommit: PropTypes.func,
   showSubmitButton: PropTypes.bool,
   value: PropTypes.string,
@@ -35,61 +32,32 @@ export const messages = defineMessages({
   },
 });
 
-class SearchQueryInput extends Component {
-  constructor() {
-    super();
+export default function SearchQueryInput({
+  id, onCommit, showSubmitButton, value,
+}) {
+  const intl = useIntl();
 
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  handleChange(event) {
-    const {
-      id,
-      onCommit,
-    } = this.props;
-
+  function handleChange(event) {
     onCommit(id, event.target.value);
   }
 
-  commit() {
-    const {
-      id,
-      onCommit,
-    } = this.props;
+  return (
+    <div className={styles.common}>
+      <input
+        aria-label={intl.formatMessage(messages.label)}
+        autoComplete="off"
+        autoCorrect="off"
+        name={id}
+        placeholder={intl.formatMessage(messages.placeholder)}
+        type="search"
+        value={value}
+        onChange={handleChange}
+      />
 
-    if (this.inputDomNode) {
-      onCommit(id, this.inputDomNode.value);
-    }
-  }
-
-  render() {
-    const {
-      id,
-      intl,
-      showSubmitButton,
-      value,
-    } = this.props;
-
-    return (
-      <div className={styles.common}>
-        <input
-          aria-label={intl.formatMessage(messages.label)}
-          autoComplete="off"
-          autoCorrect="off"
-          name={id}
-          placeholder={intl.formatMessage(messages.placeholder)}
-          type="search"
-          value={value}
-          onChange={this.handleChange}
-        />
-
-        {showSubmitButton && <SearchSubmitButton />}
-      </div>
-    );
-  }
+      {showSubmitButton && <SearchSubmitButton />}
+    </div>
+  );
 }
 
 SearchQueryInput.propTypes = propTypes;
 SearchQueryInput.defaultProps = defaultProps;
-
-export default injectIntl(SearchQueryInput);
