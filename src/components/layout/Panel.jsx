@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import styles from '../../../styles/cspace/Panel.css';
 
 const propTypes = {
-  id: PropTypes.string,
   children: PropTypes.oneOfType([
     PropTypes.element,
     PropTypes.arrayOf(PropTypes.element),
@@ -12,12 +11,11 @@ const propTypes = {
 };
 
 const defaultProps = {
-  id: '',
   children: undefined,
   title: undefined,
 };
 
-export default function Panel({ id, children, title }) {
+export default function Panel({ children, title }) {
   const [expanded, setExpanded] = useState(true);
 
   function handleHeaderButtonClick() {
