@@ -37,7 +37,7 @@ const messages = defineMessages({
   },
 });
 
-function SearchPage({
+export default function SearchPage({
   onLocationChange, params, isFilterPanelExpanded, onTogglePanelButtonClick,
 }) {
   const intl = useIntl();
@@ -100,5 +100,3 @@ function SearchPage({
 
 SearchPage.propTypes = propTypes;
 SearchPage.defaultProps = defaultProps;
-
-export default SearchPage;
