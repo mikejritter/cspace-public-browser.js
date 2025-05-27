@@ -39,7 +39,6 @@
   "dependencies": {
     "classnames": "^2.2.6",
     "cspace-refname": "^1.0.2",
-    "history": "^4.10.1",
     "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.5",
     "memoize-one": "^5.1.1",
