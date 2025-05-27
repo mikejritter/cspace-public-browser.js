@@ -7,6 +7,7 @@ import { applyMiddleware, compose, createStore } from 'redux';
 import { Provider as StoreProvider } from 'react-redux';
 import thunk from 'redux-thunk';
 import warning from 'warning';
+import { HelmetProvider } from 'react-helmet-async';
 import { loadPrefs } from './actions/prefsActions';
 import config from './config';
 import App from './components/App';
@@ -45,11 +46,13 @@ const cspacePublicBrowser = (...customConfigs) => {
   });
 
   render(
-    <RawIntlProvider value={intl}>
-      <StoreProvider store={store}>
-        <App />
-      </StoreProvider>
-    </RawIntlProvider>,
+    <HelmetProvider>
+      <RawIntlProvider value={intl}>
+        <StoreProvider store={store}>
+          <App />
+        </StoreProvider>
+      </RawIntlProvider>
+    </HelmetProvider>,
     mountNode,
   );
 };
